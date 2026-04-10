@@ -1,0 +1,278 @@
+:root {
+    /* Colors */
+    --primary-color: #409eff;
+    --primary-light: #ecf5ff;
+    --primary-gradient: linear-gradient(135deg, #66b1ff 0%, #409eff 100%);
+    --bg-gradient: linear-gradient(
+        135deg,
+        #e6f7ff 0%,
+        #f0f9ff 40%,
+        #ffffff 100%
+    );
+    --text-main: #303133;
+    --text-regular: #606266;
+    --text-secondary: #909399;
+
+    /* Borders and Shadows */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --shadow-base: 0 4px 12px rgba(64, 158, 255, 0.08);
+    --shadow-hover: 0 8px 24px rgba(64, 158, 255, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-base: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Global Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    font-family:
+        "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+        "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    color: var(--text-main);
+    background: var(--bg-gradient);
+    background-attachment: fixed; /* Keep gradient fixed when scrolling */
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Element Plus Customization */
+/* Make things rounder globally */
+:root {
+    --el-border-radius-base: 8px;
+    --el-border-radius-small: 6px;
+    --el-border-radius-round: 20px;
+}
+
+/* Card Styling - Round and soft shadow */
+.el-card {
+    border-radius: var(--radius-md) !important;
+    border: none !important;
+    box-shadow: var(--shadow-base) !important;
+    transition:
+        transform var(--transition-base),
+        box-shadow var(--transition-base) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(10px);
+}
+
+.el-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover) !important;
+}
+
+/* Button Styling - Distinct and animated */
+.el-button {
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    transition: all var(--transition-base) !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.el-button--primary {
+    background: #2563eb !important;
+    border: 2px solid #2563eb !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+}
+
+.el-button--primary:hover {
+    background: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+    transform: translateY(-2px);
+}
+
+.el-button--primary:active {
+    background: #1e40af !important;
+    border-color: #1e40af !important;
+}
+
+.el-button--success {
+    background: #16a34a !important;
+    border: 2px solid #16a34a !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25) !important;
+    font-weight: 700 !important;
+}
+
+.el-button--success:hover {
+    background: #15803d !important;
+    border-color: #15803d !important;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4) !important;
+    transform: translateY(-2px);
+}
+
+.el-button--success:active {
+    background: #166534 !important;
+    border-color: #166534 !important;
+}
+
+.el-button--danger {
+    background: #dc2626 !important;
+    border: 2px solid #dc2626 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25) !important;
+    font-weight: 700 !important;
+}
+
+.el-button--danger:hover {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+    transform: translateY(-2px);
+}
+
+.el-button--danger:active {
+    background: #991b1b !important;
+    border-color: #991b1b !important;
+}
+
+.el-button--warning {
+    background: #ea580c !important;
+    border: 2px solid #ea580c !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25) !important;
+    font-weight: 700 !important;
+}
+
+.el-button--warning:hover {
+    background: #c2410c !important;
+    border-color: #c2410c !important;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4) !important;
+    transform: translateY(-2px);
+}
+
+.el-button--warning:active {
+    background: #9a3412 !important;
+    border-color: #9a3412 !important;
+}
+
+.el-button--default {
+    background: #64748b !important;
+    border: 2px solid #64748b !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(100, 116, 139, 0.25) !important;
+    font-weight: 700 !important;
+}
+
+.el-button--default:hover {
+    background: #475569 !important;
+    border-color: #475569 !important;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4) !important;
+    transform: translateY(-2px);
+}
+
+.el-button--default:active {
+    background: #334155 !important;
+    border-color: #334155 !important;
+}
+
+.el-button.is-text {
+    background: transparent !important;
+    border: none !important;
+    color: #2563eb !important;
+    box-shadow: none !important;
+}
+
+.el-button.is-text:hover {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+}
+
+.el-button.is-text.el-button--danger {
+    color: #dc2626 !important;
+}
+
+.el-button.is-text.el-button--danger:hover {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+}
+
+.el-button:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* Inputs styling */
+.el-input__wrapper,
+.el-textarea__inner {
+    border-radius: var(--radius-sm) !important;
+    box-shadow: 0 0 0 1px #dcdfe6 inset !important;
+    transition: all var(--transition-base) !important;
+}
+
+.el-input__wrapper:hover,
+.el-textarea__inner:hover {
+    box-shadow: 0 0 0 1px #c0c4cc inset !important;
+}
+
+.el-input__wrapper.is-focus,
+.el-textarea__inner:focus {
+    box-shadow: 0 0 0 1px var(--primary-color) inset !important;
+}
+
+/* Global Animations */
+.fade-enter-active,
+.fade-leave-active {
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* General Layout helpers */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>订单支付</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/common.css" />
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+        .pay-card {
+            width: 980px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.06);
+        }
+        .pay-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .pay-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .pay-summary .price {
+            color: #d4492a;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .order-list {
+            margin: 15px 0;
+        }
+        .order-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 14px;
+        }
+        .pay-type-list {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 10px 0 20px 0;
+        }
+        .pay-type-item {
+            background: #fff;
+            border: 2px dotted #eee;
+            padding: 12px 16px;
+            width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 6px;
+        }
+        .pay-actions {
+            text-align: center;
+        }
+        .pay-tip {
+            margin-top: 10px;
+            color: #999;
+            font-size: 13px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="pay-card">
+        <div class="pay-title">订单支付</div>
+        <div class="pay-summary">
+            <div>订单数量：{{orders.length}}</div>
+            <div>应付金额：<span class="price">{{totalPrice}}</span> RMB</div>
+        </div>
+
+        <div class="order-list" v-if="orders.length > 0">
+            <div class="order-item" v-for="(item,index) in orders" :key="index">
+                订单号：{{item.cheliangOrderUuidNumber}} | 车辆：{{item.cheliangName}} | 价格：{{item.cheliangOrderPrice}} | 状态：{{item.cheliangOrderStatusValue}}
+            </div>
+        </div>
+
+        <div class="pay-type-list">
+            <label class="pay-type-item">
+                <input type="radio" name="payType" value="微信支付" v-model="payType">
+                <img src="../../img/weixin.png" alt="微信" style="width:32px;height:32px;">
+                <span>微信支付</span>
+            </label>
+            <label class="pay-type-item">
+                <input type="radio" name="payType" value="支付宝支付" v-model="payType">
+                <img src="../../img/zhifubao.png" alt="支付宝" style="width:32px;height:32px;">
+                <span>支付宝支付</span>
+            </label>
+        </div>
+
+        <div class="pay-actions">
+            <button class="layui-btn btn-theme" :disabled="!canPay" @click="submitPay">确认支付</button>
+        </div>
+        <div class="pay-tip" v-if="!canPay && orders.length > 0">部分订单已支付或已取消，暂不可支付。</div>
+    </div>
+</div>
+
+<script src="../../layui/layui.js"></script>
+<script src="../../js/vue.js"></script>
+<script src="../../js/config.js"></script>
+<script src="../../modules/config.js"></script>
+<script src="../../js/utils.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            orders: [],
+            totalPrice: '0.00',
+            payType: '微信支付',
+            canPay: false
+        },
+        methods: {
+            loadOrders(orderIds) {
+                let list = [];
+                let total = 0;
+                let pending = orderIds.length;
+                let canPay = true;
+                orderIds.forEach((id) => {
+                    layui.http.request('cheliangOrder/detail/' + id, 'get', {}, (res) => {
+                        let item = res.data || {};
+                        list.push(item);
+                        let price = Number(item.cheliangOrderPrice || 0);
+                        if (!isNaN(price)) {
+                            total += price;
+                        }
+                        if (item.cheliangOrderStatusTypes != 1) {
+                            canPay = false;
+                        }
+                        pending--;
+                        if (pending === 0) {
+                            this.orders = list;
+                            this.totalPrice = total.toFixed(2);
+                            this.canPay = canPay && list.length > 0;
+                        }
+                    });
+                });
+            },
+            submitPay() {
+                if (!this.canPay) {
+                    layui.layer.msg('订单未确认，暂不可支付', {time: 2000, icon: 5});
+                    return;
+                }
+                let orderIds = this.orders.map(item => item.id);
+                if (orderIds.length === 0) {
+                    layui.layer.msg('没有可支付的订单', {time: 2000, icon: 5});
+                    return;
+                }
+                let index = 0;
+                let payNext = () => {
+                    if (index >= orderIds.length) {
+                        window.location.href = './pay_success.html?totalPrice=' + this.totalPrice + '&payType=' + encodeURIComponent(this.payType);
+                        return;
+                    }
+                    layui.http.requestJson('cheliangOrder/pay', 'post', {id: orderIds[index]}, () => {
+                        index++;
+                        payNext();
+                    });
+                };
+                payNext();
+            }
+        }
+    });
+
+    layui.use(['layer', 'http'], function () {
+        if (!localStorage.getItem('userTable')) {
+            window.location.href = '../login/login.html';
+            return;
+        }
+        if (localStorage.getItem('userTable') !== 'yonghu') {
+            layui.layer.msg('只有用户账号可以支付订单', {time: 2000, icon: 5}, function () {
+                window.location.href = './list.html';
+            });
+            return;
+        }
+        let orderIdsParam = layui.http.getParam('orderIds') || layui.http.getParam('orderId');
+        if (!orderIdsParam) {
+            layui.layer.msg('缺少订单信息', {time: 2000, icon: 5}, function () {
+                window.location.href = './list.html';
+            });
+            return;
+        }
+        let orderIds = orderIdsParam.split(',').filter(item => item);
+        vue.loadOrders(orderIds);
+    });
+</script>
+</body>
+</html>
